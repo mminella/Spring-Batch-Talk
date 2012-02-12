@@ -17,7 +17,7 @@ This is a maven project intended to show the functionality of Spring Batch Admin
 Feedback
 --------
 
-You can send feedback via [e-mail](mailto:michael@michaelminella.com) or via [Github Issues](https://github.com/mminella/Spring-Batch-Talk/issues).
+You can send feedback via [Github Issues](https://github.com/mminella/Spring-Batch-Talk/issues).
 
 -----
 
