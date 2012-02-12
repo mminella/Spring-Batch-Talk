@@ -94,6 +94,11 @@
 			<version>${spring.batch.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-test</artifactId>
 			<version>${spring.batch.version}</version>
@@ -130,6 +135,23 @@
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.3.0.SP1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<optional>true</optional>
+			<version>3.3.2.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<optional>true</optional>
+			<version>3.4.0.GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -197,18 +219,6 @@
 						<exclude>**/Abstract*.java</exclude>
 					</excludes>
 					<junitArtifactName>junit:junit</junitArtifactName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<mainClass>org.springframework.batch.core.launch.support.CommandLineJobRunner</mainClass>
-					<arguments>
-						<argument>classpath:/launch-context.xml</argument>
-						<argument>job1</argument>
-					</arguments>
 				</configuration>
 			</plugin>
 			<plugin>
