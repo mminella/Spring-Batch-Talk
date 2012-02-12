@@ -1,0 +1,24 @@
+# Spring Batch Talk
+
+This repo contains the presentation and sample code used in my Spring Batch talks.  This is an evolving project so it may or may not match exactly what you see in person.
+
+## Deck
+
+This is the Powerpoint presentation delivered during the talk.  This by itself is not going to do you much good but it is here if you want it.  The meat of what is available in this repo is the code itself.
+
+## examples/copyJob
+
+This is a maven project consisting of a couple Spring Batch jobs.  All of them are simple (copy input from point a to point b with minimal transformation) but serve as a good introduction to how Spring Batch jobs are structured.
+
+## examples/adminJob
+
+This is a maven project intended to show the functionality of Spring Batch Admin.
+
+Feedback
+--------
+
+You can send feedback via [e-mail](mailto:michael@michaelminella.com) or via [Github Issues](https://github.com/mminella/Spring-Batch-Talk/issues).
+
+-----
+
+[Michael Minella](http://www.michaelminella.com)
