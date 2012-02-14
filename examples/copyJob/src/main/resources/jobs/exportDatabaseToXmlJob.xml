@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/batch"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+					http://www.springframework.org/schema/batch 
+	                http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+
+	<!-- Command to execute this job.  From the target directory of this project:
+		java -jar copy-file-0.0.1-SNAPSHOT.jar jobs/exportDatabaseToXmlJob.xml exportDatabaseToXmlJob city=<CITY> outputFile=<PATH_TO_OUTPUT>
+	-->
+	
+    <beans:import resource="../launch-context-with-hibernate.xml" />
+
+    <beans:bean id="customerItemReader"
+        class="org.springframework.batch.item.database.HibernateCursorItemReader" scope="step">
+		<beans:property name="sessionFactory" ref="sessionFactory"/>
+		<beans:property name="queryString" value="from Customer where city = :city"/>
+		<beans:property name="parameterValues">
+			<beans:map>
+				<beans:entry key="city" value="#{jobParameters[city]}"/>
+			</beans:map>
+		</beans:property>
+    </beans:bean>
+
+	<beans:bean id="outputFile" class="org.springframework.core.io.FileSystemResource" scope="step">
+		<beans:constructor-arg value="#{jobParameters[outputFile]}"/>
+	</beans:bean>
+
+	<beans:bean id="xmlOutputWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+    	<beans:property name="resource" ref="outputFile" />
+    	<beans:property name="marshaller" ref="customerMarshaller" />
+    	<beans:property name="rootTagName" value="customers" />
+	</beans:bean>
+
+	<beans:bean id="customerMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+	    <beans:property name="aliases">
+	        <beans:map>
+	            <beans:entry key="customer" value="com.michaelminella.springbatch.domain.Customer" />
+	        </beans:map>
+	    </beans:property>
+	</beans:bean>
+	
+    <step id="exportFileStep">
+        <tasklet>
+            <chunk reader="customerItemReader" writer="xmlOutputWriter"
+                commit-interval="10" />
+        </tasklet>
+    </step>
+
+    <job id="exportDatabaseToXmlJob">
+        <step id="step1" parent="exportFileStep" />
+    </job>
+</beans:beans>
