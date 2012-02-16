@@ -1,13 +1,28 @@
 package com.michaelminella.springbatch.domain;
 
-public class Customer {
-	private String firstName;
-	private String lastName;
-	private String address;
-	private String city;
-	private String state;
-	private String zip;
-	
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="customer")
+public class Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String firstName;
+    private String lastName;
+    private String address;
+    private String city;
+    private String state;
+    private String zip;
+    
     public String getFirstName() {
         return firstName;
     }
@@ -44,15 +59,21 @@ public class Customer {
     public void setZip(String zip) {
         this.zip = zip;
     }
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
-
+        
         output.append(firstName + " " + lastName + "\n");
         output.append(address + "\n");
         output.append(city + ", " + state + "\n");
         output.append(zip);
-
+        
         return output.toString();
     }
 }

@@ -1,4 +1,17 @@
 use spring_batch;
+-- -----------------------------------------------------
+-- Table Target
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS target ;
+
+CREATE TABLE target (
+  id INT NOT NULL AUTO_INCREMENT ,
+  ip VARCHAR(45) NOT NULL ,
+  port INT NOT NULL ,
+  connected INT,
+  banner VARCHAR(255),
+  PRIMARY KEY (id) )
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table Customer

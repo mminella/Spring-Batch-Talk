@@ -36,7 +36,7 @@
 
 	<bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
-			value="com.apress.springbatch.chapter6.SpringBatchQuartzJobLauncher" />
+			value="com.michaelminella.springbatch.tasklet.SpringBatchQuartzJobLauncher" />
 		<property name="group" value="file-maintenence" />
 		<property name="jobDataAsMap">
 			<util:map>
@@ -80,8 +80,6 @@
 		<property name="username" value="${batch.jdbc.user}" />
 		<property name="password" value="${batch.jdbc.password}" />
 	</bean>
-
-	<!-- bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/ -->
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"

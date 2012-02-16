@@ -6,7 +6,7 @@
                     http://www.springframework.org/schema/batch 
 	                http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
 
-	<bean id="deleteFilesTasklet" class="com.apress.springbatch.chapter6.DeleteFilesTasklet" />
+	<bean id="deleteFilesTasklet" class="com.michaelminella.springbatch.tasklet.DeleteFilesTasklet" />
 
 	<batch:step id="deleteFilesStep">
 		<batch:tasklet ref="deleteFilesTasklet" />

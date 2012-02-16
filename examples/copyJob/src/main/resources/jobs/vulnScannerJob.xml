@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+                    http://www.springframework.org/schema/batch 
+	                http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+
+	<!-- Command to execute this job.  From the target directory of this project:
+		java -jar copy-file-0.0.1-SNAPSHOT.jar jobs/vulnScannerJob.xml vulnScannerJob ipAddress=<IPADDRESS_OR_DOMAIN> outputFile=<LOCATION_OF_OUTPUT>
+	-->	
+	
+    <import resource="../launch-context-with-hibernate.xml" />
+
+	<bean id="loadPortsTasklet" class="com.michaelminella.springbatch.tasklet.LoadPortsTasklet" scope="step">
+		<property name="fullPortScan" value="true"/>
+		<property name="ipAddress" value="#{jobParameters[ipAddress]}"/>
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+    <bean id="targetItemReader"
+        class="org.springframework.batch.item.database.HibernateCursorItemReader" scope="step">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="queryString" value="from Target where ip = :ipAddress"/>
+		<property name="parameterValues">
+			<map>
+				<entry key="ipAddress" value="#{jobParameters[ipAddress]}"/>
+			</map>
+		</property>
+    </bean>
+
+    <bean id="exportItemReader"
+        class="org.springframework.batch.item.database.HibernateCursorItemReader" scope="step">
+		<property name="sessionFactory" ref="sessionFactory"/>
+		<property name="queryString" value="from Target where connected is true"/>
+    </bean>
+
+	<bean id="targetWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<bean id="targetProcessor" class="com.michaelminella.springbatch.processors.TargetScanItemProcessor"/>
+
+
+	<bean id="outputFile" class="org.springframework.core.io.FileSystemResource" scope="step">
+		<constructor-arg value="#{jobParameters[outputFile]}"/>
+	</bean>
+
+	<bean id="xmlOutputWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+    	<property name="resource" ref="outputFile" />
+    	<property name="marshaller" ref="targetMashaller" />
+    	<property name="rootTagName" value="openTargets" />
+	</bean>
+
+	<bean id="targetMashaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+	    <property name="aliases">
+	        <map>
+	            <entry key="target" value="com.michaelminella.springbatch.domain.Target" />
+	        </map>
+	    </property>
+	</bean>
+	
+	<batch:step id="loadPorts">
+		<batch:tasklet ref="loadPortsTasklet" />
+	</batch:step>
+
+	<batch:step id="scanPorts">
+		<batch:tasklet>
+			<batch:chunk reader="targetItemReader" processor="targetProcessor" writer="targetWriter" commit-interval="10"/>
+		</batch:tasklet>
+	</batch:step>
+
+	<batch:step id="generateResults">
+		<batch:tasklet>
+			<batch:chunk reader="exportItemReader" writer="xmlOutputWriter" commit-interval="10"/>
+		</batch:tasklet>
+	</batch:step>
+
+	<batch:job id="vulnScannerJob">
+		<batch:step id="step1" parent="loadPorts" next="step2"/>
+		<batch:step id="step2" parent="scanPorts" next="step3"/>
+ 		<batch:step id="step3" parent="generateResults"/>
+	</batch:job>
+</beans>
